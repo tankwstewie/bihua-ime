@@ -43,8 +43,32 @@ fn clear_and_draw(query: &[Stroke], candidates: &[String], selected: usize) {
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let query_arg = args
+        .iter()
+        .position(|a| a == "--query")
+        .and_then(|i| args.get(i + 1));
+
     let bytes = fs::read("data/stroke_index.bin").expect("load stroke_index.bin");
     let db: StrokeDatabase = bincode::deserialize(&bytes).expect("deserialize db");
+
+    if let Some(q) = query_arg {
+        let query: Vec<Stroke> = q
+            .chars()
+            .filter_map(|c| {
+                c.to_digit(10)
+                    .map(|d| Stroke::from_numpad(d as u8).unwrap())
+            })
+            .collect();
+        let mut results = db.query(&query);
+        results.sort_by_key(|c| (c.chars().next().unwrap() as u32, c.clone()));
+        println!("Query: {}", q);
+        println!("Candidates ({}):", results.len());
+        for (i, c) in results.iter().take(9).enumerate() {
+            println!("  {} {}", i + 1, c);
+        }
+        return;
+    }
 
     let mut query: Vec<Stroke> = Vec::new();
     let mut selected: usize = 0;
