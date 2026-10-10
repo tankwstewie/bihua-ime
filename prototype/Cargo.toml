@@ -1,0 +1,13 @@
+[package]
+name = "prototype"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "prototype"
+path = "src/main.rs"
+
+[dependencies]
+engine = { path = "../engine" }
+crossterm = "0.28"
+bincode = "1.3"

@@ -1,0 +1,4 @@
+/target
+/data/raw/animcjk
+**/*.rs.bk
+Cargo.lock
